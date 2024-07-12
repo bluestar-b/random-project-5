@@ -1,0 +1,16 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 3000
+  },
+  "uploadDir": "uploads",
+  "cacheConfig": {
+    "defaultMaxAge": 3600,
+    "customRules": {
+      ".js": { "maxAge": 69420 },
+      ".html": { "maxAge": 60 },
+      ".jpg": { "maxAge": 3600 },
+      ".png": { "maxAge": 3600 }
+    }
+  }
+}
