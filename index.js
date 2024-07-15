@@ -6,7 +6,14 @@ const mime = require("mime-types");
 const cors = require("cors");
 const etag = require("etag");
 
+
+const minimist = require('minimist');
+
+
+
 const config = require("./config.json");
+
+const argv = minimist(process.argv.slice(2));
 
 const serverConfig = config.server;
 const uploadDir = config.uploadDir;
@@ -58,6 +65,12 @@ app.use((req, res, next) => {
   next();
 });
 
+
+app.get("/metrics", (req, res) => {
+	res.json(process.memoryUsage());
+})
+
+
 app.get("/*", (req, res) => {
   const filePath = path.join(
     __dirname,
@@ -83,6 +96,7 @@ app.get("/*", (req, res) => {
       res.set("content-length", stats.size.toString());
       res.set("etag", eTag);
       res.set("vary", "Accept-Encoding");
+      res.set("server", argv.servername || "unknow-server");
       const clientETag = req.headers["if-none-match"];
       if (clientETag === eTag) {
         return res.status(304).end();
@@ -100,8 +114,8 @@ app.get("/*", (req, res) => {
   });
 });
 
-const PORT = serverConfig.port || 3000;
-const HOST = serverConfig.host || "localhost";
+const PORT = argv.port || serverConfig.port || 3000
+const HOST = argv.host || serverConfig.host || "localhost"
 app.listen(PORT, HOST, () => {
   console.log(`CDN Server listening on port: ${PORT}, host: ${HOST}`);
 });
